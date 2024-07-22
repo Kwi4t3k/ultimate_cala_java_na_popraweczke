@@ -1,5 +1,8 @@
 package org.example;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Main {
     public static void main(String[] args) {
         Point point1 = new Point(10, 20);
@@ -91,5 +94,19 @@ public class Main {
         for (Segment seg : perpendicularSegments) {
             System.out.println(seg.toSvg());
         }
+
+
+
+// Zdefiniuj klasę Polygon posiadającą prywatną tablicę punktów. Konstruktor tej klasy powinien przyjmować tablicę punktów. Napisz publiczną metodę toSvg() działającą analogicznie jak w poprzednim zadaniu.
+
+        List<Point> pointList = new ArrayList<>();
+        pointList.add(new Point(60, 70));
+        pointList.add(new Point(90, 80));
+        pointList.add(new Point(40, 50));
+
+        Polygon polygon = new Polygon(pointList);
+
+        String result = polygon.toSvg();
+        System.out.println("\n" + result);
     }
 }

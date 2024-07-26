@@ -1,0 +1,32 @@
+Nieobowiązkowe zadania do samodzielnego przygotowania się do kolejnych zajęć:
+
+
+
+Zadanie 1.
+
+Napisz klasę Person zawierającą imię i nazwisko. Napisz metodę, która zwraca napis z imieniem i nazwiskiem.
+
+Napisz klasę Teacher i klasę Student dziedziczące po klasie Person.
+
+Napisz klasę Subject, która posiada tytuł, jednego nauczyciela i listę studentów. Wykorzystaj tablice obiektów odpowiednich klas. Ustawianie zmiennych zrealizuj według własnego pomysłu.
+
+W Subject napisz metodę, która zwróci do napisu imię i nazwisko prowadzącego i studentów. Wykorzystaj metodę z punktu 1.
+
+
+Zadanie 2.
+
+Zdefiniuj interfejs Animal. Zadeklaruj w nim publiczną metodę sound() zwracającą napis. Napisz 2-3 klasy odpowiadające wybranym przez siebie zwierzętom, tak by implementowały ten interfejs. Ich metody sound() powinny zwrócić napis zawierający dźwięk charakterystyczny dla gatunku.
+
+Zmień interfejs Animal na klasę abstrakcyjną. W jej konstruktorze przyjmij argument - imię zwierzęcia. Widoczność tego imienia powinna być chroniona. Metody sound() klas podrzędnych powinny poprzedzać dźwięk imieniem (np. Burek szczeka).
+
+Zmień widoczność imienia na prywatną i napisz chroniony akcesor. Zmodyfikuj resztę programu z uwzględnieniem wspomnianej zmiany.
+
+
+Zadanie 3.
+
+Przeczytaj o interfejsie Cloneable. Zaimplementuj metodę clone() w klasie Subject z pierwszego zadania tak, aby wykonywała głęboką kopię obiektu. Przetestuj poprawność działania dodając nowych studentów do skopiowanych zajęć (jeżeli trzeba, dopisz odpowiednią metodę).
+
+
+Zadanie 4.
+
+Powtórz wiedzę z podstaw programowania na temat schematów klas UML. Zainstaluj dodatek https://plugins.jetbrains.com/plugin/15124-uml-generator. Przetestuj go w napisanych wcześniej programach.

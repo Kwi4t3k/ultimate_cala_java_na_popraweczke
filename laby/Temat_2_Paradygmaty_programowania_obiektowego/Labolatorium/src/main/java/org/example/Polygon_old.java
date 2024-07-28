@@ -5,28 +5,30 @@ import java.util.List;
 import java.util.Locale;
 
 //Zdefiniuj klasę Polygon posiadającą prywatną tablicę punktów. Konstruktor tej klasy powinien przyjmować tablicę punktów. Napisz publiczną metodę toSvg() działającą analogicznie jak w poprzednim zadaniu.
-public class Polygon extends Shape{
+public class Polygon_old {
     private List<Point> pointList = new ArrayList<>();
+    public Style style;
 
-    public Polygon(List<Point> pointList, Style style) {
-        super(style);
+    public Polygon_old(List<Point> pointList, Style style) {
         this.pointList = pointList;
+        this.style = style;
     }
 
-    public Polygon(List<Point> pointList) {
-        super(new Style("transparent", "black", 1.0));
+    public Polygon_old(List<Point> pointList) {
         this.pointList = pointList;
+        this.style = new Style("transparent", "black", 1.0);
     }
 
-    @Override
     public String toSvg(){
-        String line = "<polygon points=\"";
+        String line = "<svg height=\"500\" width=\"500\" xmlns=\"http://www.w3.org/2000/svg\">\n";
+        line += "<polygon points=\"";
 
         for (Point point : pointList){
             line += String.format(Locale.ENGLISH, "%f, %f " , point.x, point.y);
         }
 
-        line += String.format(Locale.ENGLISH, "\"style=\"%s\" />", style.toSvg());
+        line += String.format(Locale.ENGLISH, "\"style=\"fill:%s;stroke:%s;stroke-width:%f\" />", style.fillColor, style.strokeColor, style.strokeWidth);
+        line += "\n</svg>";
 
         return line;
     }
@@ -34,8 +36,7 @@ public class Polygon extends Shape{
 
     // W klasie Polygon napisz konstruktor kopiujący, wykonujący głęboką kopię obiektu.
 
-    public Polygon(Polygon polygon){
-        super(polygon.style);
+    public Polygon_old(Polygon_old polygon){
         this.pointList = new ArrayList<>();
         for (Point point : polygon.pointList){
             this.pointList.add(new Point(point.x, point.y));
@@ -44,7 +45,7 @@ public class Polygon extends Shape{
 
     // Napisz publiczną, statyczną metodę wytwórczą klasy Polygon o nazwie square. Funkcja powinna przyjąć jako argumenty: obiekt Line, obiekt Style i zwrócić wielokąt będący kwadratem, którego przekątną jest dany odcinek.
 
-    public static Polygon square(Line odcinek, Style style){
+    public static Polygon_old square(Line odcinek, Style style){
         double ax = odcinek.point1.x;
         double ay = odcinek.point1.y;
         double dx = odcinek.point2.x;
@@ -88,6 +89,6 @@ public class Polygon extends Shape{
 //            <rect width="200" height="100" x="10" y="10" rx="20" ry="20" fill="blue" />
 //        </svg>
 
-        return new Polygon(pointList1, style);
+        return new Polygon_old(pointList1, style);
     }
 }

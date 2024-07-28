@@ -6,12 +6,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SvgScene {
-//    Zmodyfikuj klasę SvgScene, aby posiadała tablicę obiektów klasy Shape i korzystając z polimorfizmu zapisz w niej obiekty typu Polygon i Ellipse.
-    private List<Shape> shapeList = new ArrayList<>();
+public class SvgScene_old {
+    private List<Polygon> polygonList = new ArrayList<>();
 
-    public void add(Shape shape){
-        shapeList.add(shape);
+    public void addPolygon(Polygon polygon){
+        polygonList.add(polygon);
     }
 
 
@@ -23,8 +22,8 @@ public class SvgScene {
 
         bufferedWriter.write("<svg height=\"500\" width=\"500\" xmlns=\"http://www.w3.org/2000/svg\">\n");
 
-        for (Shape shape : shapeList){
-            bufferedWriter.write(shape.toSvg() + "\n");
+        for (Polygon polygon : polygonList){
+            bufferedWriter.write(polygon.toSvg() + "\n");
         }
 
         bufferedWriter.write("</svg>");

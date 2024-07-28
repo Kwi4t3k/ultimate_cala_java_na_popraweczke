@@ -11,11 +11,7 @@ public class Line {
     }
 
     public String toSvg(){
-        String line = "<svg height=\"200\" width=\"300\" xmlns=\"http://www.w3.org/2000/svg\">\n";
-        line += String.format(Locale.ENGLISH, "<line x1=\"%f\" y1=\"%f\" x2=\"%f\" y2=\"%f\" style=\"stroke:red;stroke-width:2\" />", point1.x, point1.y, point2.x, point2.y);
-        line += "\n</svg>";
-
-        return line;
+        return String.format(Locale.ENGLISH, "<line x1=\"%f\" y1=\"%f\" x2=\"%f\" y2=\"%f\" style=\"stroke:red;stroke-width:2\" />", point1.x, point1.y, point2.x, point2.y);
     }
 
     public double length(Point point1, Point point2){
@@ -59,5 +55,4 @@ public class Line {
 
         return new Line(point, newPoint);
     }
-
 }

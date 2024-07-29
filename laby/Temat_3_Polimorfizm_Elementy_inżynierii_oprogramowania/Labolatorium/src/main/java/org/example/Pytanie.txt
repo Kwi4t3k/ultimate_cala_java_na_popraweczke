@@ -1,0 +1,88 @@
+Zastanów się, jakie konsekwencje dla struktury programu miałoby stworzenie analogicznej klasy dziedziczącej po klasie Ellipse oraz próba dodawania innych parametrów do tagu.
+
+Stworzenie analogicznej klasy dziedziczącej po klasie Ellipse oraz próba dodawania innych parametrów do tagu miałoby kilka konsekwencji dla struktury programu. Przeanalizujmy te konsekwencje szczegółowo:
+
+1. Polimorfizm i Dziedziczenie
+Analogiczna Klasa dla Ellipse
+Podobnie jak SolidFilledPolygon dla Polygon, możemy stworzyć klasę SolidFilledEllipse dla Ellipse:
+
+        public class SolidFilledEllipse extends Ellipse {
+            private String color;
+
+            public SolidFilledEllipse(Vec2 center, double rx, double ry, Style style, String color) {
+                super(center, rx, ry, style);
+                this.color = color;
+            }
+
+            @Override
+            public String toSvg(String param) {
+                String newParam = String.format(Locale.ENGLISH, "fill=\"%s\" %s", color, param);
+                return super.toSvg(newParam);
+            }
+        }
+
+Ta klasa dziedziczy po Ellipse i dodaje nowy parametr fill, podobnie jak SolidFilledPolygon.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2. Konsekwencje dla Struktury Programu
+a. Złożoność i Rozszerzalność
+Dodanie klasy SolidFilledEllipse zwiększa złożoność systemu, ale również jego rozszerzalność. Dzięki dziedziczeniu i polimorfizmowi możemy łatwo tworzyć nowe figury,
+które dziedziczą właściwości i metody z klas bazowych, jednocześnie dodając nowe funkcjonalności.
+
+b. Ujednolicenie Interfejsu Shape
+Aby zapewnić, że wszystkie figury mogą być traktowane jednolicie, interfejs Shape musi być odpowiednio zaprojektowany:
+
+        public interface Shape {
+            String toSvg(String param);
+        }
+
+Wszystkie klasy implementujące ten interfejs będą musiały dostosować się do tego samego podpisu metody toSvg, co zapewnia spójność.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+3. Skalowalność i Przyszłe Rozszerzenia
+a. Dodawanie Innych Parametrów
+Jeśli chcemy dodawać inne parametry do tagów SVG (np. stroke-width, opacity), możemy napotkać problemy ze skalowalnością. Każda nowa klasa potomna musiałaby implementować własne wersje metody toSvg, co może prowadzić do duplikacji kodu.
+
+b. Potrzeba Refaktoryzacji
+Może być konieczne wprowadzenie wzorca projektowego, takiego jak Dekorator, aby uniknąć duplikacji kodu. Dekorator pozwala na dynamiczne dodawanie nowych funkcjonalności do obiektów:
+
+        public abstract class ShapeDecorator implements Shape {
+            protected Shape decoratedShape;
+
+            public ShapeDecorator(Shape decoratedShape) {
+                this.decoratedShape = decoratedShape;
+            }
+
+            @Override
+            public String toSvg(String param) {
+                return decoratedShape.toSvg(param);
+            }
+        }
+
+        public class FillColorDecorator extends ShapeDecorator {
+            private String color;
+
+            public FillColorDecorator(Shape decoratedShape, String color) {
+                super(decoratedShape);
+                this.color = color;
+            }
+
+            @Override
+            public String toSvg(String param) {
+                String newParam = String.format(Locale.ENGLISH, "fill=\"%s\" %s", color, param);
+                return super.toSvg(newParam);
+            }
+        }
+
+Zamiast tworzyć nowe klasy dziedziczące, możemy dekorować istniejące obiekty, dodając nowe funkcjonalności w bardziej modularny sposób.
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+4. Konsekwencje Praktyczne
+a. Prosty Kod, ale Trudny w Utrzymaniu
+Na początku, dodawanie nowych klas dziedziczących może wydawać się prostym rozwiązaniem, ale w miarę wzrostu liczby klas system może stać się trudny w utrzymaniu.
+Każda zmiana w interfejsie lub klasie bazowej może wymagać modyfikacji wszystkich klas potomnych.
+
+b. Zwiększona Przeźroczystość
+Dekoratorzy zwiększają przeźroczystość, pozwalając na bardziej elastyczne dodawanie nowych atrybutów bez modyfikacji istniejących klas.
+
+Podsumowanie
+Stworzenie analogicznej klasy dziedziczącej po Ellipse oraz dodawanie nowych parametrów do tagu ma zarówno zalety, jak i wady.
+Choć dziedziczenie umożliwia łatwe rozszerzanie funkcjonalności, może prowadzić do złożoności i duplikacji kodu.
+Wprowadzenie wzorca Dekorator może pomóc w zarządzaniu tą złożonością, umożliwiając bardziej modularne podejście do dodawania nowych atrybutów i funkcjonalności.

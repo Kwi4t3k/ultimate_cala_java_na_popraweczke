@@ -75,8 +75,34 @@ public class Main {
 //            |
 //        do zadań do 4
 
-        SvgScene scene = SvgScene.getInstance();
+//        SvgScene scene = SvgScene.getInstance();
+//
+//        Style style = new Style("blue", "red", 4.0);
+//        Vec2 vec21 = new Vec2(10, 40);
+//        Vec2 vec22 = new Vec2(100, 200);
+//        Vec2 vec23 = new Vec2(80, 30);
+//
+//        List<Vec2> vec2List = new ArrayList<>();
+//        vec2List.add(vec21);
+//        vec2List.add(vec22);
+//        vec2List.add(vec23);
+//
+//        Shape ellipse = new Ellipse(new Vec2(120, 80), 100, 50, style);
+//        Shape polygon = new Polygon(vec2List, new Style("blue", "red", 2.0));
+//
+//        Shape strokeEllipse = new StrokeShapeDecorator(ellipse, "blue", 4.0);
+//        Shape dropShadowPolygon = new DropShadowDecorator(polygon);
+//
+//        scene.add(strokeEllipse);
+//        scene.add(dropShadowPolygon);
+//
+//        scene.save("src/main/resources/output.svg");
 
+//        /\
+//        |
+//        zad 5
+
+        SvgScene scene = new SvgScene();
         Style style = new Style("blue", "red", 4.0);
         Vec2 vec21 = new Vec2(10, 40);
         Vec2 vec22 = new Vec2(100, 200);
@@ -90,12 +116,14 @@ public class Main {
         Shape ellipse = new Ellipse(new Vec2(120, 80), 100, 50, style);
         Shape polygon = new Polygon(vec2List, new Style("blue", "red", 2.0));
 
-        Shape strokeEllipse = new StrokeShapeDecorator(ellipse, "blue", 4.0);
-        Shape dropShadowPolygon = new DropShadowDecorator(polygon);
+        scene.add(new DropShadowDecorator(ellipse));
+        scene.add(new GradientFillShapeDecorator.Builder()
+                .addShape(polygon)
+                .addOffset(0.0).addColors("red")
+                .addOffset(1.0).addColors("blue")
+                .build());
 
-        scene.add(strokeEllipse);
-        scene.add(dropShadowPolygon);
+        scene.save("output.svg");
 
-        scene.save("src/main/resources/output.svg");
     }
 }

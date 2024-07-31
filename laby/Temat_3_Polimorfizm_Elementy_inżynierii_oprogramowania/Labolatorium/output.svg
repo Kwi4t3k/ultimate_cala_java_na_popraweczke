@@ -1,0 +1,5 @@
+<svg height="500" width="500" xmlns="http://www.w3.org/2000/svg">
+<defs></defs>
+<ellipse rx="100.000000" ry="50.000000" cx="120.000000" cy="80.000000" filter="url(#f0)"  style="fill:blue;stroke:red;stroke-width:4.000000"/>
+<polygon points="10.000000,40.000000 100.000000,200.000000 80.000000,30.000000" fill="url(#g0)"  style="fill:blue;stroke:red;stroke-width:2.000000" />
+</svg>

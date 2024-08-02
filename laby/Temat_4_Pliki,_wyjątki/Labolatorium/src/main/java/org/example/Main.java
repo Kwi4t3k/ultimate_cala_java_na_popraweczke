@@ -1,5 +1,6 @@
 package org.example;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -27,15 +28,65 @@ public class Main {
 //        }
 
         //zad4
+//        try {
+//            List<Person> lista = Person.fromCsv(Path.of("src/main/resources/family.csv"));
+//            int i = 0;
+//            for (Person person : lista) {
+//                System.out.println(i + ": " + person + "\n");
+//                i++;
+//            }
+//        } catch (AmbiguousPersonException e) {
+//            System.err.println("Wykryto powtarzające się imię i nazwisko: " + e.getMessage());
+//        }
+
+        //zad 5
+//        try {
+//            List<Person> lista = Person.fromCsv(Path.of("src/main/resources/family.csv"));
+//            int i = 1;
+//            for (Person person : lista) {
+//                System.out.println(i + ": " + person + "\n");
+//                i++;
+//            }
+//        } catch (AmbiguousPersonException | IOException | NegativeLifespanException e) {
+//            System.err.println("Wykryto powtarzające się imię i nazwisko: " + e.getMessage());
+//        }
+
+        //zad 6
+//        try {
+//            List<Person> lista = Person.fromCsv(Path.of("src/main/resources/family.csv"));
+//            int i = 0;
+//            for (Person person : lista) {
+//                System.out.println(i + ": " + person + "\n");
+//                i++;
+//            }
+//        } catch (AmbiguousPersonException | NegativeLifespanException e) {
+//            System.err.println("Wykryto błąd: " + e.getMessage());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+        //zad 7
         try {
-            List<Person> lista = Person.fromCsv(Path.of("src/main/resources/family.csv"));
+            Path csvPath = Path.of("src/main/resources/family.csv");
+            Path binaryPath = Path.of("src/main/resources/family.dat");
+
+            List<Person> lista = Person.fromCsv(csvPath);
             int i = 0;
             for (Person person : lista) {
                 System.out.println(i + ": " + person + "\n");
                 i++;
             }
-        } catch (AmbiguousPersonException e) {
-            System.err.println("Wykryto powtarzające się imię i nazwisko: " + e.getMessage());
+
+            // Zapis do pliku binarnego
+            Person.toBinaryFile(csvPath, binaryPath);
+
+            // Odczyt z pliku binarnego
+            List<Person> binaryList = Person.fromBinaryFile(binaryPath);
+            for (Person person : binaryList) {
+                System.out.println(person);
+            }
+        } catch (AmbiguousPersonException | NegativeLifespanException | IOException e) {
+            System.err.println("Wykryto błąd: " + e.getMessage());
         }
     }
 }

@@ -1,9 +1,8 @@
 package org.example;
 
-import java.util.AbstractList;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Spliterators;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -180,4 +179,22 @@ public class CustomList<T> extends AbstractList<T> {
         );
     }
 
+    // Statyczna metoda szablonowa filtrująca obiekty z listy na podstawie klasy
+    public static <T> List<T> filterByClass(List<T> list, Class<?> clazz) {
+        return list.stream()
+                .filter(clazz::isInstance) // Filtracja obiektów należących do wskazanej klasy lub jej podklas
+                .collect(Collectors.toList()); // Zbieranie wyników do nowej listy
+    }
+
+    // Predykat sprawdzający, czy wartość znajduje się w otwartym przedziale
+    public static <T extends Comparable<T>> Predicate<T> isWithinRange(T lowerBound, T upperBound) {
+        return value -> value.compareTo(lowerBound) > 0 && value.compareTo(upperBound) < 0;
+    }
+
+    // Statyczna metoda, która zlicza elementy listy spełniające warunek predykatu
+    public static <T extends Comparable<T>> long countElementsInRange(CustomList<T> list, T lowerBound, T upperBound) {
+        return list.stream()
+                .filter(isWithinRange(lowerBound, upperBound))
+                .count();
+    }
 }

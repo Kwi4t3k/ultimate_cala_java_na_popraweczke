@@ -18,6 +18,10 @@ public class DeathCauseStatistic {
         return ICD10;
     }
 
+    public List<Integer> getDeathCount() {
+        return deathCount;
+    }
+
     public static DeathCauseStatistic fromCsvLine(String line){
         String[] parts = line.split(",");
 
@@ -90,5 +94,4 @@ public class DeathCauseStatistic {
         // Jeśli wiek nie pasuje do żadnego z przedziałów (np. wiek jest mniejszy niż 0), zwróć null
         return null;
     }
-
 }

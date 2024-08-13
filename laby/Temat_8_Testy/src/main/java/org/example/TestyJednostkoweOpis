@@ -1,0 +1,126 @@
+Testy jednostkowe (ang. **unit tests**) to fundamentalny element praktyki testowania oprogramowania. Ich celem jest sprawdzenie poprawności działania pojedynczych, najmniejszych jednostek kodu, takich jak metody lub klasy. Testy jednostkowe pomagają w weryfikacji, czy poszczególne elementy aplikacji działają zgodnie z oczekiwaniami, niezależnie od innych części systemu.
+
+Oto różne rodzaje testów jednostkowych:
+
+### 1. **Testy stanu (State-based testing)**
+   - **Opis**: Testy te sprawdzają, czy metoda lub klasa ustawia wewnętrzny stan obiektu na poprawną wartość po jej wykonaniu.
+   - **Przykład**: Sprawdzenie, czy po wywołaniu metody `setName("Jan")` wartość pola `name` w obiekcie zmienia się na `"Jan"`.
+
+   ```java
+   @Test
+   public void testSetName() {
+       User user = new User();
+       user.setName("Jan");
+       assertEquals("Jan", user.getName());
+   }
+   ```
+
+### 2. **Testy zachowania (Behavioral testing)**
+   - **Opis**: Testy te sprawdzają, czy metoda wywołuje inne metody lub wykonuje odpowiednie operacje z innymi obiektami.
+   - **Przykład**: Sprawdzenie, czy metoda `saveUser()` wywołuje metodę `database.save(user)`.
+
+   ```java
+   @Test
+   public void testSaveUserCallsDatabaseSave() {
+       Database mockDatabase = mock(Database.class);
+       UserService userService = new UserService(mockDatabase);
+
+       User user = new User("Jan");
+       userService.saveUser(user);
+
+       verify(mockDatabase).save(user);
+   }
+   ```
+
+### 3. **Testy wyjątków (Exception testing)**
+   - **Opis**: Testy te sprawdzają, czy metoda prawidłowo rzuca wyjątki w odpowiednich sytuacjach.
+   - **Przykład**: Sprawdzenie, czy metoda `divide(int a, int b)` rzuca wyjątek `ArithmeticException` w przypadku dzielenia przez zero.
+
+   ```java
+   @Test
+   public void testDivideByZeroThrowsException() {
+       Calculator calculator = new Calculator();
+       assertThrows(ArithmeticException.class, () -> calculator.divide(10, 0));
+   }
+   ```
+
+### 4. **Testy wartości granicznych (Boundary testing)**
+   - **Opis**: Testy te sprawdzają działanie metod na granicach dopuszczalnych wartości wejściowych. Mogą obejmować wartości minimalne, maksymalne lub tuż poza granicami.
+   - **Przykład**: Sprawdzenie, czy metoda `isValidAge(int age)` działa poprawnie dla wartości 0 (minimalnej) oraz 150 (maksymalnej).
+
+   ```java
+   @Test
+   public void testValidAgeBoundaries() {
+       assertTrue(AgeValidator.isValidAge(0));   // Minimalna wartość
+       assertTrue(AgeValidator.isValidAge(150)); // Maksymalna wartość
+       assertFalse(AgeValidator.isValidAge(-1)); // Poza granicą
+       assertFalse(AgeValidator.isValidAge(151)); // Poza granicą
+   }
+   ```
+
+### 5. **Testy parametrów (Parameterized testing)**
+   - **Opis**: Testy te pozwalają na uruchomienie tej samej metody testowej z różnymi zestawami danych wejściowych.
+   - **Przykład**: Sprawdzenie, czy metoda `isEven(int number)` zwraca poprawne wartości dla różnych liczb.
+
+   ```java
+   @ParameterizedTest
+   @ValueSource(ints = {2, 4, 6, 8})
+   public void testIsEven(int number) {
+       assertTrue(MathUtils.isEven(number));
+   }
+   ```
+
+### 6. **Testy z mockowaniem (Mocking-based testing)**
+   - **Opis**: Użycie mocków (fałszywych obiektów) do symulowania zależności klasy. Jest to przydatne w przypadku testowania klas, które mają zależności od zewnętrznych serwisów, baz danych itp.
+   - **Przykład**: Testowanie klasy `EmailService`, która wysyła maile, przy użyciu mocka do symulacji zewnętrznego serwera SMTP.
+
+   ```java
+   @Test
+   public void testSendEmail() {
+       EmailServer mockServer = mock(EmailServer.class);
+       EmailService emailService = new EmailService(mockServer);
+
+       emailService.sendEmail("test@example.com", "Subject", "Body");
+
+       verify(mockServer).send(any());
+   }
+   ```
+
+### 7. **Testy wstrzykiwania zależności (Dependency Injection Testing)**
+   - **Opis**: Testowanie klas, które używają wstrzykiwania zależności (DI) do przekazywania zależności z zewnątrz. Pozwala to na łatwe podmienianie rzeczywistych zależności na mocki lub stuby.
+   - **Przykład**: Testowanie usługi, która otrzymuje zależności poprzez konstruktor.
+
+   ```java
+   @Test
+   public void testServiceWithInjectedDependencies() {
+       Database mockDatabase = mock(Database.class);
+       NotificationService mockNotificationService = mock(NotificationService.class);
+
+       UserService userService = new UserService(mockDatabase, mockNotificationService);
+
+       userService.createUser("John");
+
+       verify(mockDatabase).save(any());
+       verify(mockNotificationService).notify(any());
+   }
+   ```
+
+### 8. **Testy regresji (Regression Testing)**
+   - **Opis**: Testy te są pisane, aby upewnić się, że po wprowadzeniu zmian w kodzie nie wystąpią nowe błędy w funkcjonalnościach, które wcześniej działały poprawnie.
+   - **Przykład**: Pisanie testów jednostkowych dla metod, które były poprawione po zgłoszeniu błędu, aby upewnić się, że błąd nie powróci.
+
+   ```java
+   @Test
+   public void testFixedBug() {
+       String input = "Some input";
+       String expectedOutput = "Some fixed output";
+
+       String result = someClass.methodThatWasFixed(input);
+
+       assertEquals(expectedOutput, result);
+   }
+   ```
+
+### Podsumowanie
+
+Testy jednostkowe są różnorodne i można je dostosować do specyficznych potrzeb testowanego kodu. Ich celem jest upewnienie się, że każdy najmniejszy komponent systemu działa poprawnie i przewidywalnie w różnych scenariuszach. Dobrze napisane testy jednostkowe stanowią fundament solidnego, łatwego w utrzymaniu oprogramowania.

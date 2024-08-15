@@ -1,6 +1,7 @@
 package org.example;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -240,5 +241,57 @@ public class ImageProcessor {
 
         // Zwracanie ostatecznego histogramu, który zawiera zsumowane wyniki z wszystkich wątków
         return histogram;
+    }
+
+    public static class HistogramVisualizer {
+
+        /**
+         * Generuje obraz przedstawiający wykres histogramu.
+         *
+         * @param histogram Tablica wartości histogramu (o rozmiarze 256).
+         * @return Obraz wykresu histogramu jako BufferedImage.
+         */
+        public BufferedImage generateHistogramImage(int[] histogram) {
+            // Ustawienia wymiarów obrazu histogramu
+            int width = 512;  // Szerokość obrazu
+            int height = 400; // Wysokość obrazu
+            int barWidth = width / histogram.length; // Szerokość pojedynczego paska na wykresie
+
+            // Tworzenie nowego obrazu o podanych wymiarach
+            BufferedImage histogramImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+            // Uzyskanie obiektu Graphics2D do rysowania na obrazie
+            Graphics2D g2d = histogramImage.createGraphics();
+
+            // Wypełnienie tła obrazu kolorem białym
+            g2d.setColor(Color.WHITE);
+            g2d.fillRect(0, 0, width, height);
+
+            // Znalezienie maksymalnej wartości w histogramie (dla normalizacji wysokości słupków)
+            int maxCount = 0;
+            for (int value : histogram) {
+                if (value > maxCount) {
+                    maxCount = value;
+                }
+            }
+
+            // Rysowanie wykresu histogramu
+            g2d.setColor(Color.BLACK);
+            for (int i = 0; i < histogram.length; i++) {
+                // Normalizacja wysokości słupków do wysokości obrazu
+                int barHeight = (int) (((double) histogram[i] / maxCount) * (height - 50));
+                int x = i * barWidth;
+                int y = height - barHeight;
+
+                // Rysowanie pojedynczego słupka
+                g2d.fillRect(x, y, barWidth, barHeight);
+            }
+
+            // Zwolnienie zasobów Graphics2D
+            g2d.dispose();
+
+            // Zwrócenie wygenerowanego obrazu
+            return histogramImage;
+        }
     }
 }

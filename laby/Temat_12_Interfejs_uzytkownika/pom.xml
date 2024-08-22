@@ -38,6 +38,12 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.14.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -61,7 +67,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                org.example.temat_12_interfejs_uzytkownika/org.example.temat_12_interfejs_uzytkownika.HelloApplication
+                                org.example.temat_12_interfejs_uzytkownika/org.example.temat_12_interfejs_uzytkownika.MainApplication
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>

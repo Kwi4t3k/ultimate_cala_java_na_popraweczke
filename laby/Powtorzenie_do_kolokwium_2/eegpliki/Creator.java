@@ -1,4 +1,4 @@
-package org.example.DatabaseCreator;
+package com.umcspro.eeg.databasecreator;
 
 
 import java.io.File;
@@ -10,7 +10,7 @@ import java.sql.Statement;
 public class Creator {
 
     public static void main(String[] args) {
-        String url = "jdbc:sqlite:src/main/resources/usereeg.db";
+        String url = "jdbc:sqlite:C:\\Users\\luke\\Documents\\usereeg.db";
         Creator creator = new Creator();
         creator.create(url);
 
@@ -33,7 +33,7 @@ public class Creator {
     }
 
     public void delete(String url) {
-        String filepath = url.substring(url.indexOf("/"));
+        String filepath = url.substring(url.indexOf("\\"));
         File dbFile = new File(filepath);
         if (dbFile.exists()) {
             if (!dbFile.delete()){

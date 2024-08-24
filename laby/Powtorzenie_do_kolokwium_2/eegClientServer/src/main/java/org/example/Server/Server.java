@@ -121,4 +121,12 @@ public class Server { // Definicja klasy Server, która będzie pełnić rolę s
             return null; // Zwrócenie null w przypadku błędu
         }
     }
+
+    public void setDatabaseURL(String databaseURL) {
+        this.databaseURL = databaseURL;
+    }
+
+    public void stop() {
+        running = false;
+    }
 }

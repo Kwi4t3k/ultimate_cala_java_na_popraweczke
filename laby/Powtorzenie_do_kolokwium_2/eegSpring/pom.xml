@@ -1,27 +1,55 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion> <!-- Określenie wersji modelu POM -->
 
-    <groupId>org.example</groupId>
-    <artifactId>eeg</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <parent>
+        <groupId>org.springframework.boot</groupId> <!-- Określenie grupy parent projektu Spring Boot -->
+        <artifactId>spring-boot-starter-parent</artifactId> <!-- Określenie artefaktu parent projektu Spring Boot -->
+        <version>3.3.0</version> <!-- Określenie wersji parent projektu Spring Boot -->
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <groupId>org.example</groupId> <!-- Określenie grupy projektu (unikalny identyfikator) -->
+    <artifactId>eeg</artifactId> <!-- Określenie artefaktu projektu (nazwa projektu) -->
+    <version>1.0-SNAPSHOT</version> <!-- Określenie wersji projektu -->
 
     <properties>
-        <maven.compiler.source>22</maven.compiler.source>
-        <maven.compiler.target>22</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>17</java.version> <!-- Ustawienie wersji Javy na 17 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> <!-- Ustawienie kodowania źródeł na UTF-8 -->
     </properties>
 
-    <dependencies>
-<!--        do @SpringBootApplication-->
-        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web -->
+    <dependencies> <!-- Sekcja zależności projektu -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>3.3.2</version>
+            <groupId>org.springframework.boot</groupId> <!-- Grupa zależności Spring Boot -->
+            <artifactId>spring-boot-starter-thymeleaf
+            </artifactId> <!-- Starter Thymeleaf do obsługi szablonów widoków -->
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId> <!-- Grupa zależności Spring Boot -->
+            <artifactId>spring-boot-starter-web</artifactId> <!-- Starter Spring MVC do obsługi aplikacji webowych -->
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId> <!-- Grupa zależności Spring Boot -->
+            <artifactId>spring-boot-starter-test
+            </artifactId> <!-- Starter testów Spring Boot zawierający JUnit, Mockito itp. -->
+            <scope>test</scope> <!-- Określenie zakresu zależności jako 'test' -->
+        </dependency>
+
+        <dependency>
+            <groupId>org.xerial</groupId> <!-- Grupa zależności SQLite JDBC -->
+            <artifactId>sqlite-jdbc</artifactId> <!-- Artefakt SQLite JDBC -->
+            <version>3.41.2.2</version> <!-- Wersja SQLite JDBC -->
         </dependency>
     </dependencies>
 
+    <build> <!-- Sekcja budowania projektu -->
+        <plugins> <!-- Sekcja pluginów -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId> <!-- Grupa pluginu Spring Boot -->
+                <artifactId>spring-boot-maven-plugin</artifactId> <!-- Plugin do budowania aplikacji Spring Boot -->
+            </plugin>
+        </plugins>
+    </build>
 </project>

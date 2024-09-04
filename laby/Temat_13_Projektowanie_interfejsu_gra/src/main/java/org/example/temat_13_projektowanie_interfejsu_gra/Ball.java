@@ -30,14 +30,14 @@ public class Ball extends GraphicsItem {
         this.x += moveVector.getX() * velocity * seconds;
         this.y += moveVector.getY() * velocity * seconds;
 
-        // Obsługa kolizji ze ścianami
-        if (this.x <= 0 || this.x + this.width >= canvasWidth) {
-            moveVector = new Point2D(-moveVector.getX(), moveVector.getY());
-        }
-
-        if (this.y <= 0 || this.y + this.height >= canvasHeight) {
-            moveVector = new Point2D(moveVector.getX(), -moveVector.getY());
-        }
+        // Obsługa kolizji ze ścianami przeniesiona do metod prywatnych
+//        if (this.x <= 0 || this.x + this.width >= canvasWidth) {
+//            moveVector = new Point2D(-moveVector.getX(), moveVector.getY());
+//        }
+//
+//        if (this.y <= 0 || this.y + this.height >= canvasHeight) {
+//            moveVector = new Point2D(moveVector.getX(), -moveVector.getY());
+//        }
 
         System.out.println("Ball position: x=" + this.x + ", y=" + this.y);
     }
@@ -46,5 +46,29 @@ public class Ball extends GraphicsItem {
     public void draw(GraphicsContext graphicsContext) {
         graphicsContext.setFill(Color.WHITE);
         graphicsContext.fillOval(x, y, width, height);
+    }
+
+    // Metoda odbijająca piłkę w poziomie
+    public void bounceHorizontally() {
+        this.moveVector = new Point2D(-moveVector.getX(), moveVector.getY());
+    }
+
+    // Metoda odbijająca piłkę w pionie
+    public void bounceVertically() {
+        this.moveVector = new Point2D(moveVector.getX(), -moveVector.getY());
+    }
+
+    // Metody zwracające skrajne punkty piłki
+    public double getTop() {
+        return y;
+    }
+    public double getBottom() {
+        return y + height;
+    }
+    public double getLeft() {
+        return x;
+    }
+    public double getRight() {
+        return x + width;
     }
 }

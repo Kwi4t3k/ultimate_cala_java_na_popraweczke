@@ -24,7 +24,7 @@ public class Paddle extends GraphicsItem {
     public void move(double mouseX) {
         this.x = mouseX - width / 2;
 
-        // Zapobieganie wyjściu platformy poza krawędź kanwy
+//         Zapobieganie wyjściu platformy poza krawędź kanwy
         if (this.x < 0) {
             this.x = 0;
         } else if (this.x + width > canvasWidth) {

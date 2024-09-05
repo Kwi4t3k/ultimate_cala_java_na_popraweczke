@@ -13,55 +13,55 @@ import java.util.Iterator;
 import java.util.List;
 
 public class GameCanvas extends Canvas {
-    private GraphicsContext graphicsContext;
-    private Paddle paddle;
-    private Ball ball;
-    private boolean gameRunning;
-    private long lastFrameTime;
+    private GraphicsContext graphicsContext;  // Kontekst graficzny do rysowania na Canvas
+    private Paddle paddle;  // Platforma
+    private Ball ball;  // Piłka
+    private boolean gameRunning;  // Flaga wskazująca, czy gra jest w toku
+    private long lastFrameTime;  // Czas ostatniej klatki
 
-    private List<Brick> bricks;
+    private List<Brick> bricks;  // Lista cegieł w grze
 
     public GameCanvas(double width, double height) {
-        super(width, height); // Ustawienie rozmiarów kanwy
+        super(width, height);  // Ustawienie rozmiarów Canvas
 
-        // Ustawiamy statyczne pola szerokości i wysokości kanwy
+        // Ustawienie statycznych wymiarów Canvas dla innych obiektów
         GraphicsItem.setCanvasWidthHeight(width, height);
 
-        // Pobieramy kontekst graficzny dla kanwy
+        // Pobranie kontekstu graficznego do rysowania
         graphicsContext = this.getGraphicsContext2D();
 
-        // Tworzymy nową platformę i umieszczamy ją w odpowiednim miejscu
+        // Inicjalizacja platformy
         paddle = new Paddle();
 
-        // Tworzymy nową piłkę
+        // Inicjalizacja piłki
         ball = new Ball();
 
-        // Ustawiamy początkową pozycję piłki na środku platformy
+        // Ustawienie początkowej pozycji piłki nad platformą
         ball.setPosition(new Point2D(paddle.getX() + paddle.getWidth() / 2, paddle.getY() + paddle.getHeight()));
 
-        // Początkowo gra jest zatrzymana
+        // Gra nie jest jeszcze rozpoczęta
         gameRunning = false;
 
         // Inicjalizacja listy cegieł
         bricks = new ArrayList<>();
 
-        // Ładowanie poziomu z cegłami
+        // Ładowanie poziomu gry (dodawanie cegieł)
         loadlevel();
 
-        // Rysujemy początkowy stan gry (czarne tło i platforma)
+        // Rysowanie początkowego stanu gry
         draw();
 
-        // Przechwytywanie zdarzeń ruchu myszy
+        // Obsługa zdarzenia ruchu myszy
         this.setOnMouseMoved(this::handleMouseMoved);
 
-        // Przechwytywanie kliknięcia myszy, aby rozpocząć grę
+        // Obsługa kliknięcia myszy w celu rozpoczęcia gry
         this.setOnMouseClicked(event -> handleMouseClicked(event));
 
         // Uruchomienie pętli gry
         startGameLoop();
     }
 
-    // Rysowanie tła, platformy, piłki i cegieł
+    // Metoda rysująca tło, platformę, piłkę i cegły
     public void draw() {
         // Wypełnienie tła kolorem czarnym
         graphicsContext.setFill(Color.BLACK);
@@ -70,22 +70,22 @@ public class GameCanvas extends Canvas {
         // Rysowanie platformy
         paddle.draw(graphicsContext);
 
-        //Rysowanie piłki
+        // Rysowanie piłki
         ball.draw(graphicsContext);
 
-        //Rysowanie cegieł
+        // Rysowanie cegieł
         for (Brick brick : bricks) {
             brick.draw(graphicsContext);
         }
     }
 
-    // Metoda obsługująca ruch myszy
+    // Metoda obsługująca ruch myszy i przesuwająca platformę
     public void handleMouseMoved(MouseEvent event) {
-        // Przesunięcie platformy w zależności od pozycji myszy
+        // Przesuwanie platformy do pozycji myszy
         paddle.move(event.getX());
 
         if (!gameRunning) {
-            // Ustawienie piłki nad platformą, jeśli gra jeszcze nie rozpoczęta
+            // Ustawienie piłki nad platformą, gdy gra nie jest jeszcze rozpoczęta
             ball.setPosition(new Point2D(paddle.getX() + paddle.getWidth() / 2, paddle.getY() - ball.getHeight()));
         }
 
@@ -93,43 +93,45 @@ public class GameCanvas extends Canvas {
         draw();
     }
 
-    // Metoda obsługująca kliknięcie myszy, rozpoczynająca grę
+    // Metoda obsługująca kliknięcie myszy i rozpoczynająca grę
     private void handleMouseClicked(MouseEvent event) {
         if (event.getButton() == MouseButton.PRIMARY && !gameRunning) {
             // Rozpoczęcie gry po kliknięciu
             gameRunning = true;
-            lastFrameTime = System.nanoTime();
+            lastFrameTime = System.nanoTime();  // Zapisanie czasu rozpoczęcia gry
         }
     }
 
-    // Pętla gry, aktualizuje pozycję piłki w każdym kroku
+    // Pętla gry, aktualizuje pozycję piłki i sprawdza kolizje
     private void startGameLoop() {
         AnimationTimer gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 if (gameRunning) {
-                    // Obliczanie czasu, który upłynął od ostatniej klatki (w sekundach)
+                    // Obliczenie czasu, który upłynął od ostatniej klatki (w sekundach)
                     double seconds = (now - lastFrameTime) / 1_000_000_000.0;
                     lastFrameTime = now;
 
                     // Aktualizacja pozycji piłki
                     ball.updatePosition(seconds);
 
-                    // Sprawdzanie warunków odbicia
+                    // Sprawdzanie warunków odbicia piłki
                     if (shouldBallBounceHorizontally()) {
                         ball.bounceHorizontally();
                     }
                     if (shouldBallBounceVertically()) {
                         ball.bounceVertically();
                     }
-                    if (shouldBallBounceFromPaddle()) {
-                        ball.bounceVertically();
+                    if (gameRunning && shouldBallBounceFromPaddle()) {
+//                        ball.bounceVertically();
+                        // Odbicie piłki od platformy z uwzględnieniem pozycji uderzenia
+                        ball.bounceFromPaddle(calculateHitPosition());
                     }
 
-                    // Sprawdzanie kolizji z cegłami
+                    // Sprawdzanie kolizji piłki z cegłami
                     checkCollisionsWithBricks();
                 }
-                // Rysowanie wszystkiego
+                // Rysowanie aktualnego stanu gry
                 draw();
             }
         };
@@ -137,40 +139,39 @@ public class GameCanvas extends Canvas {
         gameLoop.start();
     }
 
+    // Sprawdza, czy piłka powinna odbić się poziomo od krawędzi ekranu
     private boolean shouldBallBounceHorizontally() {
-        // Odbicie od lewej lub prawej krawędzi ekranu
         if (ball.getX() <= 0 || ball.getX() + ball.getWidth() >= getWidth()) {
-            return true;
+            return true;  // Odbicie od lewej lub prawej krawędzi
         }
-
         return false;
     }
 
+    // Sprawdza, czy piłka powinna odbić się pionowo od krawędzi ekranu
     private boolean shouldBallBounceVertically() {
-        // Odbicie od górnej krawędzi ekranu
         if (ball.getY() <= 0) {
-            return true;
+            return true;  // Odbicie od górnej krawędzi
         }
 
-        // Odbicie od dolnej krawędzi ekranu
         if (ball.getY() + ball.getHeight() >= getHeight()) {
-            // Tu możemy dodatkowo zakończyć grę, jeśli piłka spadnie na dół
+            // Jeżeli piłka spadnie poniżej dolnej krawędzi, kończymy grę
             gameRunning = false;
             return true;
         }
-
         return false;
     }
 
+    // Sprawdza, czy piłka powinna odbić się od platformy
     private boolean shouldBallBounceFromPaddle() {
-        // Odbicie od platformy
-        if (ball.getY() + ball.getHeight() >= paddle.getY() &&
-                ball.getY() + ball.getHeight() <= paddle.getY() + paddle.getHeight() &&
-                ball.getX() + ball.getWidth() > paddle.getX() &&
-                ball.getX() < paddle.getX() + paddle.getWidth()) {
-            return true;
-        }
-        return false;
+        return ball.getBottom() >= paddle.getY() &&  // Sprawdzenie, czy piłka jest na wysokości platformy
+                ball.getTop() <= paddle.getY() + paddle.getHeight() &&  // Sprawdzenie, czy piłka jest powyżej platformy
+                ball.getRight() > paddle.getX() &&  // Sprawdzenie, czy piłka przecina lewą krawędź platformy
+                ball.getLeft() < paddle.getX() + paddle.getWidth();  // Sprawdzenie, czy piłka przecina prawą krawędź platformy
+    }
+
+    // Oblicza, w którym miejscu piłka uderza w platformę
+    private double calculateHitPosition() {
+        return (ball.getX() + ball.getWidth() / 2 - (paddle.getX() + paddle.getWidth() / 2)) / (paddle.getWidth() / 2);
     }
 
     // Metoda ładująca poziom z cegłami
@@ -179,31 +180,36 @@ public class GameCanvas extends Canvas {
         Brick.setGrid(20, 10);
 
         // Dodanie cegieł do poziomu
-        for (int row = 2; row <= 7 ; row++) {
-            // Kolory w zależności od wiersza
+        for (int row = 2; row <= 7; row++) {
+            // Kolor cegieł w zależności od wiersza
             Color color = Color.hsb(360.0 * (row - 2) / 6, 1.0, 1.0);
 
             for (int col = 0; col < 10; col++) {
+                // Tworzenie cegieł w siatce
                 bricks.add(new Brick(col, row, color));
             }
         }
     }
 
+    // Metoda sprawdzająca kolizje piłki z cegłami
     private void checkCollisionsWithBricks() {
+        // Iteracja po cegłach
         Iterator<Brick> iterator = bricks.iterator();
 
         while (iterator.hasNext()) {
             Brick brick = iterator.next();
+            // Sprawdzanie kolizji cegły z piłką
             Brick.CrushType crushType = brick.checkCollision(ball.getTop(), ball.getBottom(), ball.getLeft(), ball.getRight());
 
             if (crushType != Brick.CrushType.NoCrush) {
+                // Odbicie piłki w zależności od typu kolizji
                 if (crushType == Brick.CrushType.HorizontalCrush) {
                     ball.bounceHorizontally();
                 } else if (crushType == Brick.CrushType.VerticalCrush) {
                     ball.bounceVertically();
                 }
 
-                // Usunięcie cegły po uderzeniu
+                // Usunięcie cegły po kolizji
                 iterator.remove();
                 break;
             }

@@ -112,7 +112,7 @@ public class ServerApp extends Application {
 
     // Metoda uruchamiająca serwer
     private void startServer() throws IOException {
-        ServerSocket serverSocket = new ServerSocket(12345);  // Tworzy serwer nasłuchujący na porcie 12345
+        ServerSocket serverSocket = new ServerSocket(5000);  // Tworzy serwer nasłuchujący na porcie 12345
         System.out.println("Serwer uruchomiony. Oczekiwanie na połączenia...");
 
         // Pętla obsługująca klientów

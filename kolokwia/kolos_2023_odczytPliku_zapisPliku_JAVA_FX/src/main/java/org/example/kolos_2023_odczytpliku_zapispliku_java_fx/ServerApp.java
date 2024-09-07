@@ -19,61 +19,61 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.Color;
 
-
 public class ServerApp extends Application {
 
-    // Ścieżka katalogu, w którym zapiszemy plik
+    // Ścieżka katalogu, w którym będą przechowywane obrazy
     private static final String IMAGES_DIR = "images";
 
-    // Połączenie z bazą danych SQLite
+    // Obiekt połączenia do bazy danych SQLite
     private static Connection conn;
 
-    // Interfejs graficzny JavaFX
+    // Elementy interfejsu graficznego (suwak i etykieta)
     private Slider radiusSlider;
     private Label radiusLabel;
 
-    // Metoda główna programu
+    // Metoda główna uruchamiająca aplikację JavaFX
     public static void main(String[] args) {
-        launch(args);  // Uruchamiamy aplikację JavaFX
+        launch(args);  // Uruchamia interfejs użytkownika
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // Konfiguracja interfejsu graficznego
+        // Konfiguracja interfejsu graficznego JavaFX
         primaryStage.setTitle("Server Application");
 
-        // Tworzymy suwak do wyboru promienia filtra
-        radiusSlider = new Slider(1, 15, 3);
-        radiusSlider.setMajorTickUnit(2);
-        radiusSlider.setMinorTickCount(1);
-        radiusSlider.setSnapToTicks(true);
-        radiusSlider.setShowTickMarks(true);
-        radiusSlider.setShowTickLabels(true);
+        // Suwak do wyboru promienia filtra
+        radiusSlider = new Slider(1, 15, 3);  // Zakres od 1 do 15, początkowa wartość 3
+        radiusSlider.setMajorTickUnit(2);  // Główne odstępy co 2 jednostki
+        radiusSlider.setMinorTickCount(1);  // Dodatkowe małe odstępy
+        radiusSlider.setSnapToTicks(true);  // Zaokrąglanie do najbliższej wartości tick
+        radiusSlider.setShowTickMarks(true);  // Wyświetlaj znaczniki
+        radiusSlider.setShowTickLabels(true);  // Wyświetlaj wartości liczbowe przy suwaku
 
-        // Etykieta do wyświetlania wartości promienia
-        radiusLabel = new Label("Promień filtra: 3");
+        // Etykieta pokazująca bieżącą wartość promienia
+        radiusLabel = new Label("Promień filtra: 3");  // Ustawienie początkowego tekstu
+        // Dodanie słuchacza do suwaka, by aktualizował etykietę przy zmianie wartości
         radiusSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
             int radius = (newVal.intValue() % 2 == 0) ? newVal.intValue() + 1 : newVal.intValue();
             radiusLabel.setText("Promień filtra: " + radius);
         });
 
-        // Layout interfejsu
+        // Ustawienie układu graficznego (VBox z odstępami między elementami)
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
         layout.getChildren().addAll(radiusLabel, radiusSlider);
 
-        // Tworzymy scenę
+        // Tworzenie sceny z układem
         Scene scene = new Scene(layout, 400, 200);
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        // Tworzymy katalog na obrazy, jeśli nie istnieje
+        // Utwórz katalog na obrazy, jeśli nie istnieje
         createImageDirectory();
 
-        // Tworzymy bazę danych, jeśli nie istnieje
+        // Utwórz bazę danych, jeśli nie istnieje
         createDatabase();
 
-        // Uruchamiamy serwer w osobnym wątku, aby nie blokować interfejsu
+        // Uruchom serwer w osobnym wątku, aby nie blokować interfejsu użytkownika
         new Thread(() -> {
             try {
                 startServer();
@@ -83,21 +83,21 @@ public class ServerApp extends Application {
         }).start();
     }
 
-    // Metoda do tworzenia katalogu "images"
+    // Metoda tworząca katalog "images"
     private void createImageDirectory() {
         File dir = new File(IMAGES_DIR);
         if (!dir.exists()) {
-            dir.mkdirs();
+            dir.mkdirs();  // Tworzy katalog jeśli nie istnieje
         }
     }
 
-    // Metoda do tworzenia bazy danych
+    // Metoda do tworzenia bazy danych SQLite
     private void createDatabase() {
         try {
-            // Łączymy się z bazą danych SQLite
+            // Łączenie się z bazą danych SQLite (plik "images.db")
             conn = DriverManager.getConnection("jdbc:sqlite:images.db");
 
-            // Tworzymy tabelę, jeśli nie istnieje
+            // Tworzenie tabeli, jeśli nie istnieje
             String sql = "CREATE TABLE IF NOT EXISTS image_logs (" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     "path TEXT, " +
@@ -109,34 +109,36 @@ public class ServerApp extends Application {
             e.printStackTrace();
         }
     }
-    // Metoda do uruchomienia serwera
+
+    // Metoda uruchamiająca serwer
     private void startServer() throws IOException {
-        ServerSocket serverSocket = new ServerSocket(12345);
+        ServerSocket serverSocket = new ServerSocket(12345);  // Tworzy serwer nasłuchujący na porcie 12345
         System.out.println("Serwer uruchomiony. Oczekiwanie na połączenia...");
 
+        // Pętla obsługująca klientów
         while (true) {
-            try (Socket clientSocket = serverSocket.accept()) {
+            try (Socket clientSocket = serverSocket.accept()) {  // Oczekuje na połączenie klienta
                 System.out.println("Połączono z klientem");
 
                 // Odbieramy plik PNG od klienta
                 File receivedFile = receiveFile(clientSocket);
 
-                // Odczytujemy wartość promienia z interfejsu użytkownika
+                // Odczytujemy wartość promienia z suwaka
                 int radius = (int) radiusSlider.getValue();
 
                 // Przekształcamy obraz algorytmem box blur
                 BufferedImage blurredImage = applyBoxBlur(receivedFile, radius);
 
-                // Zapisujemy przekształcenie do bazy danych
-                saveToDatabase(receivedFile.getName(), radius, 100); // przykładowy czas: 100 ms
+                // Zapisujemy informacje o przekształceniu do bazy danych
+                saveToDatabase(receivedFile.getName(), radius, 100);  // Przykładowy czas przekształcenia
 
-                // Wysyłamy przekształcony plik z powrotem do klienta
+                // Wysyłamy przekształcony obraz do klienta
                 sendFileToClient(clientSocket, blurredImage);
             }
         }
     }
 
-    // Metoda do odbierania pliku od klienta
+    // Metoda odbierająca plik od klienta
     private File receiveFile(Socket clientSocket) throws IOException {
         DataInputStream dis = new DataInputStream(clientSocket.getInputStream());
 
@@ -144,7 +146,7 @@ public class ServerApp extends Application {
         String fileName = dis.readUTF();
         File file = new File(IMAGES_DIR + "/" + fileName);
 
-        // Zapisujemy otrzymany plik do katalogu "images"
+        // Zapisujemy plik do katalogu "images"
         try (FileOutputStream fos = new FileOutputStream(file)) {
             byte[] buffer = new byte[4096];
             int bytesRead;
@@ -157,12 +159,12 @@ public class ServerApp extends Application {
         return file;
     }
 
-    // Metoda do przekształcania obrazu algorytmem box blur
+    // Metoda przekształcająca obraz algorytmem box blur
     private BufferedImage applyBoxBlur(File file, int radius) throws IOException {
         BufferedImage image = ImageIO.read(file);
         BufferedImage result = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
 
-        // Przetwarzanie obrazu
+        // Przetwarzamy każdy piksel obrazu
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
                 Color blurredColor = getBlurredPixel(image, x, y, radius);
@@ -173,12 +175,12 @@ public class ServerApp extends Application {
         return result;
     }
 
-    // Metoda do obliczania rozmytego piksela
+    // Metoda obliczająca wartość rozmytego piksela
     private Color getBlurredPixel(BufferedImage image, int x, int y, int radius) {
         int red = 0, green = 0, blue = 0;
         int count = 0;
 
-        // Przetwarzamy otoczenie piksela
+        // Przetwarzamy sąsiadujące piksele
         for (int dy = -radius; dy <= radius; dy++) {
             for (int dx = -radius; dx <= radius; dx++) {
                 int newX = x + dx;
@@ -196,13 +198,14 @@ public class ServerApp extends Application {
         return new Color(red / count, green / count, blue / count);
     }
 
-    // Metoda do zapisu informacji do bazy danych
-    private void saveToDatabase(String filePath, int filterSize, int delay) {
+    // Metoda zapisująca informacje do bazy danych
+    private void saveToDatabase(String fileName, int radius, int delay) {
         try {
-            String sql = "INSERT INTO image_logs(path, size, delay) VALUES(?, ?, ?)";
+            // Przygotowujemy zapytanie SQL do wstawienia danych
+            String sql = "INSERT INTO image_logs (path, size, delay) VALUES (?, ?, ?)";
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, filePath);
-            pstmt.setInt(2, filterSize);
+            pstmt.setString(1, fileName);
+            pstmt.setInt(2, radius);
             pstmt.setInt(3, delay);
             pstmt.executeUpdate();
         } catch (Exception e) {
@@ -210,19 +213,23 @@ public class ServerApp extends Application {
         }
     }
 
-    // Metoda do wysyłania przetworzonego pliku do klienta
+    // Metoda wysyłająca przekształcony obraz do klienta
     private void sendFileToClient(Socket clientSocket, BufferedImage image) throws IOException {
         DataOutputStream dos = new DataOutputStream(clientSocket.getOutputStream());
 
-        // Konwertujemy obraz na strumień PNG
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ImageIO.write(image, "png", baos);
-        byte[] imageBytes = baos.toByteArray();
+        // Zapisujemy przekształcony obraz do pliku
+        File outputFile = new File(IMAGES_DIR + "/blurred.png");
+        ImageIO.write(image, "png", outputFile);
 
         // Wysyłamy obraz do klienta
-        dos.write(imageBytes);
-        dos.flush();
+        try (FileInputStream fis = new FileInputStream(outputFile)) {
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = fis.read(buffer)) > 0) {
+                dos.write(buffer, 0, bytesRead);
+            }
+        }
 
-        System.out.println("Przekształcony obraz został wysłany do klienta.");
+        System.out.println("Przekształcony obraz wysłany do klienta.");
     }
 }

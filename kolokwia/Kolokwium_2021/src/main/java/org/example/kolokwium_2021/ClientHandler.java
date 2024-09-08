@@ -7,45 +7,57 @@ import java.net.Socket;
 
 public class ClientHandler extends Thread {
 
-    private Socket clientSocket;
-    private appCanvas canvas;
+    private Socket clientSocket; // Socket klienta
+    private appCanvas canvas; // Płótno, na którym będą rysowane linie
+    private String currentColor; // Aktualny kolor rysowania
 
     public ClientHandler(Socket clientSocket, appCanvas appCanvas) {
         this.clientSocket = clientSocket;
         this.canvas = appCanvas;
+        this.currentColor = "000000"; // Domyślny kolor: czarny (hex: 000000)
     }
 
     @Override
     public void run() {
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())); // Strumień do odczytu danych od klienta
             String line;
 
             while ((line = in.readLine()) != null) {
                 // Przetwarzanie danych od klienta
+                if (line.equals("END")) { // Jeśli klient wysłał wiadomość "END"
+                    System.out.println("Zakończenie transmisji od klienta.");
+                    break; // Przerywamy pętlę i zamykamy połączenie
+                }
 
-                if (line.matches("^[0-9A-Fa-f]{6}$")){
+                if (line.matches("^[0-9A-Fa-f]{6}$")) { // Sprawdzamy, czy wiadomość to kolor w formacie HEX
                     System.out.println("Otrzymano HEX: " + line);
-                    canvas.setColor(line);
+                    currentColor = line; // Zapisanie nowego koloru
 
-                } else if (line.matches("^[+-]?\\d*\\.?\\d+\\s[+-]?\\d*\\.?\\d+\\s[+-]?\\d*\\.?\\d+\\s[+-]?\\d*\\.?\\d+$")) {
-
+                } else if (line.matches("^[+-]?\\d*\\.?\\d+\\s[+-]?\\d*\\.?\\d+\\s[+-]?\\d*\\.?\\d+\\s[+-]?\\d*\\.?\\d+$")) { // Sprawdzamy, czy wiadomość to współrzędne
                     System.out.println("Otrzymano współrzędne: " + line);
 
-                    String[] parts = line.split(" ");
+                    String[] parts = line.split(" "); // Dzielenie wiadomości na współrzędne
                     double x1 = Double.parseDouble(parts[0]);
                     double y1 = Double.parseDouble(parts[1]);
                     double x2 = Double.parseDouble(parts[2]);
                     double y2 = Double.parseDouble(parts[3]);
 
-                    canvas.drawLine(x1, y1, x2, y2);
+                    canvas.drawLine(x1, y1, x2, y2, currentColor); // Rysowanie linii na płótnie
 
                 } else {
-                    System.out.println("Zły format wiadomości");
+                    System.out.println("Zły format wiadomości: " + line); // Obsługa błędnego formatu wiadomości
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Obsługa wyjątków związanych z I/O
+        } finally {
+            try {
+                clientSocket.close(); // Zamknięcie socketu klienta
+                System.out.println("Rozłączono z klientem");
+            } catch (IOException e) {
+                e.printStackTrace(); // Obsługa wyjątków podczas zamykania socketu
+            }
         }
     }
 }

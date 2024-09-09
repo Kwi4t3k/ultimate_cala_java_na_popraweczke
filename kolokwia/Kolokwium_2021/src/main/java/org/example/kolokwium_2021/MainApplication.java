@@ -46,10 +46,10 @@ public class MainApplication extends Application {
     // Obsługa naciśnięć klawiszy strzałek
     private void handleKeyPress(KeyEvent keyEvent, Stage stage) {
         switch (keyEvent.getCode()) {
-            case UP -> offsetY += 10; // Przesunięcie w górę
-            case DOWN -> offsetY -= 10; // Przesunięcie w dół
-            case LEFT -> offsetX += 10; // Przesunięcie w lewo
-            case RIGHT -> offsetX -= 10; // Przesunięcie w prawo
+            case UP -> offsetY -= 10; // Przesunięcie w górę
+            case DOWN -> offsetY += 10; // Przesunięcie w dół
+            case LEFT -> offsetX -= 10; // Przesunięcie w lewo
+            case RIGHT -> offsetX += 10; // Przesunięcie w prawo
         }
 
         // Zaktualizowanie tytułu okna, aby pokazać bieżące przesunięcie
@@ -72,11 +72,16 @@ public class MainApplication extends Application {
 
         // Pętla obsługująca klientów
         while (true) {
-            try (Socket clientSocket = serverSocket.accept()) { // Akceptowanie połączenia od klienta
+            try {
+                // Akceptowanie połączenia od klienta
+                Socket clientSocket = serverSocket.accept();
+
                 System.out.println("Połączono z klientem");
 
                 // Każdy klient jest obsługiwany w osobnym wątku
                 new ClientHandler(clientSocket, appCanvas).start();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
             // Serwer będzie kontynuował nasłuch, nie zamykamy serverSocket
         }

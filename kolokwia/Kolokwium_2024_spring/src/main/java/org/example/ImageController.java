@@ -67,8 +67,8 @@ public class ImageController {
         imageRGB.setPixelOfImage(x, y, color);
 
         Database database = Database.getInstance();
+
         database.addPixelToDatabase(tokenId, x, y, color);
-        database.closeConnection();
 
         System.out.println("setColor_end");
 

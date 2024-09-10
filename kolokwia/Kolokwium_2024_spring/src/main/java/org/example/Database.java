@@ -9,7 +9,6 @@ public class Database {
 
     private Connection connection;
     private Statement statement;
-
     private static Database instance;
 
     private Database() {
@@ -29,10 +28,9 @@ public class Database {
 
     public static Database getInstance() {
         if (instance == null) {
-            return new Database();
-        } else {
-            return instance;
+            instance = new Database();
         }
+        return instance;
     }
 
     private void createTable() {
@@ -41,15 +39,18 @@ public class Database {
         try {
             statement.execute(createMyTable);
         } catch (SQLException e) {
-            System.err.println("błąd przy tworzeniu tabeli");
+            System.err.println("Błąd przy tworzeniu tabeli");
             e.printStackTrace();
         }
     }
 
     public void addPixelToDatabase(int tokenId, int x, int y, String hexColor) {
         String insert = "INSERT INTO entry (token, x, y, color, timestamp) VALUES(?, ?, ?, ?, ?);";
+        PreparedStatement preparedStatement = null;
+
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(insert);
+            preparedStatement = connection.prepareStatement(insert);
+
             preparedStatement.setInt(1, tokenId);
             preparedStatement.setInt(2, x);
             preparedStatement.setInt(3, y);
@@ -61,10 +62,6 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }
-
-    public void deletePixelFromDatabase(int tokenId, int x, int y, String hexColor) {
-
     }
 
     public void closeConnection() {

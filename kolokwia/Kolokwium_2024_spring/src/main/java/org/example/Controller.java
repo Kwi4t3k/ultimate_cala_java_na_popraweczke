@@ -15,8 +15,29 @@ public class Controller {
 //        return "hi";
 //    }
 
-    @PostMapping("/register") //modyfikacja czegoś na serwerze to POST | GET jest tylko do wyciągania
-    public String register() {
+//    @PostMapping("/register") //modyfikacja czegoś na serwerze to POST | GET jest tylko do wyciągania
+//    public String register() {
+//        System.out.println("register_start");
+//
+//        Token token = new Token();
+//
+//        Map<String, String> map = new HashMap<>();
+//        map.put("token", String.valueOf(token.getId())); // klucz: token, wartość: token.getId()
+//        map.put("dateOfCreation", String.valueOf(token.getTimeOfCreation())); // klucz: dateOfCreation, wartość: token.getTimeOfCreation()
+//
+//        Gson gson = new Gson();
+//        String JSONtoken = gson.toJson(map);
+//
+//        System.out.println("register_end");
+//
+//        return JSONtoken;
+//    }
+    //sprawdzenie register w terminalu:
+    //      curl -X POST http://localhost:8080/register
+
+    //wersja ze zwracaniem mapy
+    @PostMapping("/register")
+    public Map<String, String> register() {
         System.out.println("register_start");
 
         Token token = new Token();
@@ -25,13 +46,8 @@ public class Controller {
         map.put("token", String.valueOf(token.getId())); // klucz: token, wartość: token.getId()
         map.put("dateOfCreation", String.valueOf(token.getTimeOfCreation())); // klucz: dateOfCreation, wartość: token.getTimeOfCreation()
 
-        Gson gson = new Gson();
-        String JSONtoken = gson.toJson(map);
-
         System.out.println("register_end");
 
-        return JSONtoken;
+        return map;
     }
-    //sprawdzenie register w terminalu:
-    //      curl -X POST http://localhost:8080/register
 }

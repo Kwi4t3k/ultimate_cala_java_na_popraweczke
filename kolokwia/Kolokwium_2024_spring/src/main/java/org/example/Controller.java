@@ -1,14 +1,19 @@
 package org.example;
 
 import com.google.gson.Gson;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-@RestController
+@RestController // żeby pokazać że jest kontrolerem springa
 public class Controller {
+
+    //KROK 1
 
 //    @GetMapping sprawdzenie czy kontroler działa i wyświetla cokolwiek w przeglądarce
 //    public String hi() {
@@ -35,7 +40,7 @@ public class Controller {
     //sprawdzenie register w terminalu:
     //      curl -X POST http://localhost:8080/register
 
-    //wersja ze zwracaniem mapy
+    //wersja ze zwracaniem mapy | mapa przechowuje jeden token, lista tokenów jest w arrayList
     @PostMapping("/register")
     public Map<String, String> register() {
         System.out.println("register_start");
@@ -50,4 +55,19 @@ public class Controller {
 
         return map;
     }
+
+//    KROK 2
+    @GetMapping("/tokens")
+    public List<Token.TokenDTO> getTokens() {
+        List<Token.TokenDTO> tokenDTOS = new ArrayList<>();
+
+        for (Token token : Token.getTokenList()) {
+            tokenDTOS.add(new Token.TokenDTO(token));
+        }
+
+        return tokenDTOS;
+    }
+
+    // sprawdzenie w przeglądarce:
+    //      http://loclhost:8080/tokens
 }

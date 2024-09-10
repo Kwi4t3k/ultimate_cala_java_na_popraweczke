@@ -9,13 +9,12 @@ public class Token {
     private int id;
     private LocalDateTime timeOfCreation;
     private static int actualValueOfToken = 0;
-    private static List<Token> tokenList = new ArrayList<Token>(); // Lista do przechowywania wszystkich tokenów, która się aktualizuje sama
+    private static List<Token> tokens = new ArrayList<Token>(); // Lista do przechowywania wszystkich tokenów, która się aktualizuje sama
 
     public Token() {
         id = actualValueOfToken++; // pierwsza wartość id = 0 | inkrementacja będzie po przypisaniu zmiennej id
         timeOfCreation = LocalDateTime.now();
-
-        tokenList.add(this);
+        tokens.add(this);
     }
 
     public int getId() {
@@ -26,8 +25,8 @@ public class Token {
         return timeOfCreation;
     }
 
-    public static List<Token> getTokenList() { // Zwraca listę wszystkich tokenów
-        return tokenList;
+    public static List<Token> getTokens() { // Zwraca listę wszystkich tokenów
+        return tokens;
     }
 
     //    KROK 2

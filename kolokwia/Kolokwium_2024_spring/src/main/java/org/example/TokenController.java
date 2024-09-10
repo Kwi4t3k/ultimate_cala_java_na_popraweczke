@@ -60,7 +60,7 @@ public class TokenController {
     public List<Token.TokenDTO> getTokens() {
         List<Token.TokenDTO> tokenDTOS = new ArrayList<>();
 
-        for (Token token : Token.getTokenList()) {
+        for (Token token : Token.getTokens()) {
             tokenDTOS.add(new Token.TokenDTO(token));
         }
 

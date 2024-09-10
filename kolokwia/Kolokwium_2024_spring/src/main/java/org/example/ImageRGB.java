@@ -1,8 +1,11 @@
 package org.example;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class ImageRGB {
+    // KROK 3
+
     private BufferedImage image;
     private static ImageRGB instance;
 
@@ -20,5 +23,12 @@ public class ImageRGB {
             instance = new ImageRGB();
         }
         return instance;
+    }
+
+    // KROK 4
+    public void setPixelOfImage(int x, int y, String hexColor) {
+        Color color = Color.decode(hexColor);
+        int rgb = color.getRGB();
+        image.setRGB(x, y, rgb);
     }
 }

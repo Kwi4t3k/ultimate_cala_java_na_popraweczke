@@ -38,7 +38,7 @@ public class ImageController {
 
     // KROK 4
     @PostMapping("/pixel")
-    public ResponseEntity setColorOfPixel(@RequestParam int tokenId, @RequestParam int x, @RequestParam int y, @RequestParam String color) {
+    public ResponseEntity setColorOfPixel(@RequestParam("tokenId") int tokenId, @RequestParam("x") int x, @RequestParam("y") int y, @RequestParam("color") String color) {
         System.out.println("setColor_start");
 
         boolean tokenFound = false;

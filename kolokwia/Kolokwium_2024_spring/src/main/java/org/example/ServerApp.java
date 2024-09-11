@@ -9,6 +9,11 @@ public class ServerApp {
         // KROK 6
         ImageRGB.getInstance().setImageBasedOnPixels();
 
+        // KROK 7
+
+        Server server = new Server(5000);
+        server.start();
+
         SpringApplication.run(ServerApp.class, args);
     }
 }

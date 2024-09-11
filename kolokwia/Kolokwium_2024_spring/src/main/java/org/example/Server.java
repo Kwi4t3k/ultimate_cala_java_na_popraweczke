@@ -5,12 +5,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server extends Thread {
-    private Socket clientSocket;
     private ServerSocket serverSocket;
-    private Client client;
-    private BufferedReader reader;
-    private String login;
-    private String password;
+    private Socket clientSocket;
+    private boolean isClientConnected = false;
 
     public Server (int port) {
         try {
@@ -23,43 +20,70 @@ public class Server extends Thread {
 
     @Override
     public void run() {
-        boolean isClientConnected = false;
         while (true) {
             try {
-                if (!isClientConnected) {
-                    clientSocket = serverSocket.accept();
-                    System.out.println("Połączono z klientem");
+                clientSocket = serverSocket.accept();
+                System.out.println("Połączono klienta");
 
-                    OutputStream outputStream = clientSocket.getOutputStream();
-                    PrintWriter printWriter = new PrintWriter(outputStream, true);
-                    printWriter.println("Polaczono z serwerem");
-
-                    InputStream inputStream = clientSocket.getInputStream();
-                    reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                    printWriter.println("Witaj admin!");
-                    printWriter.println("Podaj haslo");
-                    password = reader.readLine();
-
-                    if (password.trim().equals("tajnehaslo")) {
-                        printWriter.println("Poprawne haslo. Zapraszam");
-                        isClientConnected = true;
-
-                        String message;
-                        message = reader.readLine();
-                        if (message.trim().equals("bye")) {
-                            disconnect();
-                        }
-                    } else {
-                        printWriter.println("Niepoprawne haslo. Wypierdzielaj");
-                        isClientConnected = false;
-                        disconnect();
-                    }
+                // Jeśli klient jest już połączony, odrzucamy nowe połączenia
+                if (isClientConnected) {
+                    PrintWriter tmpWriter = new PrintWriter(clientSocket.getOutputStream(), true);
+                    tmpWriter.println("Inny admin jest juz zalogowany. Sprobuj pozniej.");
+                    clientSocket.close();
+                    System.out.println("Rozłączono klienta ponieważ admin jest już zalogowany");
+                } else {
+                    // Uruchomienie nowego wątku do obsługi klienta
+                    new ClientHandler(clientSocket).start();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
 
+    // Klasa wewnętrzna do obsługi klienta
+    private class ClientHandler extends Thread {
+        private Socket clientSocket;
+        private BufferedReader reader;
+        private PrintWriter writer;
+
+        public ClientHandler(Socket clientSocket) {
+            this.clientSocket = clientSocket;
+        }
+
+        @Override
+        public void run() {
+            try {
+                reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                writer = new PrintWriter(clientSocket.getOutputStream(), true);
+
+                writer.println("Polaczono z serwerem");
+                writer.println("Witaj admin!");
+                writer.println("Podaj haslo");
+
+                String password = reader.readLine();
+
+                if (password.trim().equals("tajnehaslo")) {
+                    writer.println("Poprawne haslo. Zapraszam");
+                    isClientConnected = true;
+
+                    String message;
+                    while ((message = reader.readLine()) != null) {
+                        if (message.trim().equals("bye")) {
+                            writer.println("adioz");
+                            disconnect();
+                            break;
+                        }
+                        // Tutaj dodać obsługę ban
+                    }
+                } else {
+                    writer.println("Niepoprawne haslo. Wypierdzielaj");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                disconnect();
+            }
         }
     }
 
@@ -67,6 +91,7 @@ public class Server extends Thread {
         try {
             clientSocket.close();
             System.out.println("Rozłączono klienta");
+            isClientConnected = false; // Ustawienie flagi na false, aby można było połączyć kolejnego klienta
         } catch (IOException e) {
             e.printStackTrace();
         }

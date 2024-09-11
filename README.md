@@ -7,7 +7,7 @@
 - Kwaśniewicz https://github.com/umcspro
 
 # Repo Natalki ❤️
-https://github.com/Miyukivv/ProgramowanieJava
+https://github.com/Miyukivv?tab=repositories
 
 # Repo Damiana (kolosy z poprzednich lat)
 https://github.com/damiankawerski?tab=repositories

@@ -1,7 +1,11 @@
 package org.example;
 
+import org.apache.tomcat.jni.Pool;
+
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Database {
     public static final String DRIVER = "org.sqlite.JDBC";
@@ -62,6 +66,30 @@ public class Database {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    //  KROK 6
+
+    public List<Pixel> getListOfPixelsFromDatabase() {
+        String select = "select * from entry";
+        List<Pixel> pixels = new ArrayList<>();
+
+        try {
+            ResultSet resultSet = statement.executeQuery(select);
+
+            while (resultSet.next()) {
+                int x = resultSet.getInt("x");
+                int y = resultSet.getInt("y");
+                String color = resultSet.getString("color");
+
+                pixels.add(new Pixel(x, y, color));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return pixels;
     }
 
     public void closeConnection() {

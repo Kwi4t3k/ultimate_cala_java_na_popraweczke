@@ -2,6 +2,7 @@ package org.example;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 public class ImageRGB {
     // KROK 3
@@ -30,5 +31,16 @@ public class ImageRGB {
         Color color = Color.decode(hexColor);
         int rgb = color.getRGB();
         image.setRGB(x, y, rgb);
+    }
+
+    // KROK 6
+
+    public void setImageBasedOnPixels(){
+        Database database = Database.getInstance();
+        List<Pixel> pixels = database.getListOfPixelsFromDatabase();
+
+        for (Pixel pixel : pixels) {
+            setPixelOfImage(pixel.getX(), pixel.getY(), pixel.getColor());
+        }
     }
 }

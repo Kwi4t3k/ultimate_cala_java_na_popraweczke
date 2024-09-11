@@ -36,8 +36,6 @@ public class TokenController {
 //
 //        return JSONtoken;
 //    }
-    //sprawdzenie register w terminalu:
-    //      curl -X POST http://localhost:8080/register
 
     //wersja ze zwracaniem mapy | mapa przechowuje jeden token, lista tokenów jest w arrayList
     @PostMapping("/register")
@@ -54,6 +52,9 @@ public class TokenController {
 
         return map;
     }
+    //sprawdzenie register w terminalu:
+    //      curl -X POST http://localhost:8080/register
+    // jak nie działa to najpierw: Remove-item alias:curl | w terminalu
 
 //    KROK 2
     @GetMapping("/tokens")

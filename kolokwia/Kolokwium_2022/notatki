@@ -13,3 +13,36 @@ module org.example.kolokwium_2022 {
                                              |
                                              |
 }
+
+
+
+`Platform.runLater(() -> {})` to metoda w JavaFX, która umożliwia bezpieczne wykonywanie kodu na wątku GUI (wątku aplikacji). JavaFX jest biblioteką GUI dla Javy, która wymaga, aby wszelkie zmiany w interfejsie użytkownika były wykonywane na wątku aplikacji, znanym również jako wątek JavaFX Application Thread.
+
+### Jak to działa?
+
+- **Wątek aplikacji JavaFX (JavaFX Application Thread)**: Wszystkie operacje związane z interfejsem użytkownika, takie jak aktualizacja komponentów GUI (przyciski, etykiety, itp.), muszą być wykonywane na tym wątku. Bezpieczne wykonywanie operacji na tym wątku jest kluczowe dla stabilności aplikacji i uniknięcia błędów.
+
+- **Platform.runLater**: Metoda ta przyjmuje obiekt typu `Runnable` jako argument i dodaje go do kolejki zadań, które mają zostać wykonane na wątku aplikacji JavaFX. Oznacza to, że kod wewnątrz `runLater` zostanie wykonany na odpowiednim wątku, nawet jeśli wywołanie tej metody pochodzi z innego wątku (np. z wątku roboczego).
+
+### Przykład użycia
+
+W Twoim kodzie `Platform.runLater` jest używane w wątku roboczym, który odbiera dane z serwera. Ponieważ operacje na GUI (takie jak aktualizacja listy lub etykiety) muszą być wykonywane na wątku aplikacji, używamy `Platform.runLater` do przeniesienia tych operacji do odpowiedniego wątku.
+
+```java
+Platform.runLater(() -> {
+    // Kod tutaj będzie wykonany na wątku aplikacji JavaFX
+    controller.addWord(finalMessage);
+});
+```
+
+### Co to oznacza?
+
+- **Bezpieczne aktualizacje GUI**: `Platform.runLater` zapewnia, że operacje związane z GUI są bezpieczne i zgodne z zasadami JavaFX.
+- **Asynchroniczność**: Pozwala na asynchroniczne wykonywanie kodu, co jest szczególnie ważne w aplikacjach GUI, gdzie operacje mogą być wykonywane w tle (np. pobieranie danych z serwera).
+
+### Kiedy używać?
+
+- **Wątki robocze**: Kiedy pracujesz z wątkami roboczymi (np. pobieranie danych z serwera, obliczenia), a następnie musisz zaktualizować GUI, musisz używać `Platform.runLater`.
+- **Operacje GUI**: Każda operacja, która zmienia stan GUI (dodawanie elementów do listy, zmiana tekstu etykiety) powinna być wykonywana na wątku JavaFX Application Thread.
+
+Podsumowując, `Platform.runLater` jest kluczowym narzędziem w JavaFX do synchronizacji z wątkiem GUI, co zapewnia stabilność i poprawność aplikacji graficznych.

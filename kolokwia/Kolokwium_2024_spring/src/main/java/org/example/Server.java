@@ -74,7 +74,28 @@ public class Server extends Thread {
                             disconnect();
                             break;
                         }
-                        // Tutaj dodać obsługę ban
+
+                        // KROK 8
+
+                        if (message.startsWith("ban")) {
+                            String[] messageParts = message.split(" ");
+                            if (messageParts.length == 2 && isInteger(messageParts[1])) {
+                                int id = Integer.parseInt(messageParts[1]);
+                                System.out.println("Użytkownik o id: " + id + " zbanowany");
+
+                                synchronized (this) { // w nawiasach trzeba dać wątek
+                                    int numberOfDeletedRecords = AdminUtills.ban(id);
+                                    writer.println("Usunieto " + numberOfDeletedRecords + " rekordow");
+                                }
+                            }
+                        }
+
+                        // KROK 9
+                        if (message.startsWith("video")) {
+                            writer.println("Rozpoczynam generowanie wideo...");
+                            AdminUtills.generateVideo();
+                            writer.println("Wideo zostało wygenerowane.");
+                        }
                     }
                 } else {
                     writer.println("Niepoprawne haslo. Wypierdzielaj");
@@ -85,6 +106,15 @@ public class Server extends Thread {
                 disconnect();
             }
         }
+    }
+
+    private static boolean isInteger(String s) {
+        try {
+            Integer.parseInt(s);
+        } catch (NumberFormatException | NullPointerException e) {
+            return false;
+        }
+        return true;
     }
 
     public void disconnect(){

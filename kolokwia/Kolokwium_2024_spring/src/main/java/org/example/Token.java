@@ -37,6 +37,15 @@ public class Token {
         return elapsedMinutes < 5;
     }
 
+    // KROK 8 | usuwanie tokenu
+    public static void removeToken(int id){
+        for (Token token : tokens) {
+            if (token.getId() == id) {
+                tokens.remove(token);
+            }
+        }
+    }
+
     static class TokenDTO { // jest tworzony na podstawie zwykłego tokena | obiekt transportujący dane do tokenów | łatwiej zarządzać isActive | DTO - data transfer objector
         public int id;
         public LocalDateTime timeOfCreation;

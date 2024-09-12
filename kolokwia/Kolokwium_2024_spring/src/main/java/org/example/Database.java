@@ -48,6 +48,22 @@ public class Database {
         }
     }
 
+    // KROK 8
+    public int removeRecords(int id) {
+        String delete = "DELETE FROM entry WHERE token=?";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(delete);
+
+            preparedStatement.setInt(1, id);
+
+            int records = preparedStatement.executeUpdate();
+            return records;
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+    }
+
     public void addPixelToDatabase(int tokenId, int x, int y, String hexColor) {
         String insert = "INSERT INTO entry (token, x, y, color, timestamp) VALUES(?, ?, ?, ?, ?);";
         PreparedStatement preparedStatement = null;

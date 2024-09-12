@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.kolos_2023_odczytpliku_zapispliku_java_fx.ServerAppController">
+    <Slider fx:id="radiusSlider" layoutX="14.0" layoutY="30.0" prefWidth="200.0" />
+    <Label fx:id="radiusLabel" layoutX="14.0" layoutY="60.0" text="Promień: 3" />
+</AnchorPane>

@@ -1,0 +1,7 @@
+Podsumowanie:
+Ad 1: Otrzymywanie pliku PNG od klienta (receiveFile metoda w startServer).
+Ad 2: Zapis pliku w katalogu images (w metodzie receiveFile oraz przy tworzeniu katalogu w createImageDirectory).
+Ad 3: Odczyt liczby całkowitej z interfejsu użytkownika (wartość promienia uzyskiwana z radiusSlider w startServer).
+Ad 4: Przekształcenie obrazu algorytmem box blur (applyBoxBlur i getBlurredPixel w startServer).
+Ad 5: Zapisanie podsumowania przekształcenia do bazy danych (saveToDatabase w startServer).
+Ad 6: Odesłanie pliku z przekształconym obrazem klientowi (sendFileToClient w startServer).

@@ -1,5 +1,11 @@
 package org.example.kolos_2023_odczytpliku_zapispliku_java_fx;
 
+// Importujemy niezbędne klasy i pakiety
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -7,18 +13,16 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-
-import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.Color;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 
+// Klasa główna aplikacji serwera
 public class ServerApp extends Application {
 
     // Ścieżka katalogu, w którym będą przechowywane obrazy
@@ -28,70 +32,55 @@ public class ServerApp extends Application {
     private static Connection conn;
 
     // Elementy interfejsu graficznego (suwak i etykieta)
+    @FXML
     private Slider radiusSlider;
+    @FXML
     private Label radiusLabel;
 
-    // Metoda główna uruchamiająca aplikację JavaFX
     public static void main(String[] args) {
-        launch(args);  // Uruchamia interfejs użytkownika
+        launch(args);  // Uruchamia interfejs użytkownika aplikacji JavaFX
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // Konfiguracja interfejsu graficznego JavaFX
-        primaryStage.setTitle("Server Application");
+        // Ładujemy plik FXML z definicją interfejsu użytkownika
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/kolos_2023_odczytpliku_zapispliku_java_fx/view.fxml"));
+        AnchorPane root = loader.load();
+        Scene scene = new Scene(root);
+        primaryStage.setTitle("Server Application");  // Ustawiamy tytuł okna
+        primaryStage.setScene(scene);  // Ustawiamy scenę w oknie
+        primaryStage.show();  // Wyświetlamy okno
 
-        // Suwak do wyboru promienia filtra
-        radiusSlider = new Slider(1, 15, 3);  // Zakres od 1 do 15, początkowa wartość 3
-        radiusSlider.setMajorTickUnit(2);  // Główne odstępy co 2 jednostki
-        radiusSlider.setMinorTickCount(1);  // Dodatkowe małe odstępy
-        radiusSlider.setSnapToTicks(true);  // Zaokrąglanie do najbliższej wartości tick
-        radiusSlider.setShowTickMarks(true);  // Wyświetlaj znaczniki
-        radiusSlider.setShowTickLabels(true);  // Wyświetlaj wartości liczbowe przy suwaku
-
-        // Etykieta pokazująca bieżącą wartość promienia
-        radiusLabel = new Label("Promień filtra: 3");  // Ustawienie początkowego tekstu
-        // Dodanie słuchacza do suwaka, by aktualizował etykietę przy zmianie wartości
-        radiusSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
-            int radius = (newVal.intValue() % 2 == 0) ? newVal.intValue() + 1 : newVal.intValue();
-            radiusLabel.setText("Promień filtra: " + radius);
-        });
-
-        // Ustawienie układu graficznego (VBox z odstępami między elementami)
-        VBox layout = new VBox(10);
-        layout.setPadding(new Insets(20));
-        layout.getChildren().addAll(radiusLabel, radiusSlider);
-
-        // Tworzenie sceny z układem
-        Scene scene = new Scene(layout, 400, 200);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        // Pobieramy kontroler z pliku FXML i inicjalizujemy elementy interfejsu
+        ServerAppController controller = loader.getController();
+        radiusSlider = controller.getRadiusSlider();
+        radiusLabel = controller.getRadiusLabel();
 
         // Utwórz katalog na obrazy, jeśli nie istnieje
-        createImageDirectory();
+        createImageDirectory();  // Ad 2
 
         // Utwórz bazę danych, jeśli nie istnieje
-        createDatabase();
+        createDatabase();  // Ad 5
 
         // Uruchom serwer w osobnym wątku, aby nie blokować interfejsu użytkownika
         new Thread(() -> {
             try {
-                startServer();
+                startServer();  // Ad 1, 3, 4, 5, 6
             } catch (IOException e) {
-                e.printStackTrace();
+                e.printStackTrace();  // Wypisujemy wyjątek w przypadku błędu
             }
         }).start();
     }
 
-    // Metoda tworząca katalog "images"
+    // Metoda tworząca katalog "images", jeśli nie istnieje
     private void createImageDirectory() {
         File dir = new File(IMAGES_DIR);
         if (!dir.exists()) {
-            dir.mkdirs();  // Tworzy katalog jeśli nie istnieje
+            dir.mkdirs();  // Tworzy katalog, jeśli nie istnieje
         }
     }
 
-    // Metoda do tworzenia bazy danych SQLite
+    // Metoda do tworzenia bazy danych SQLite, jeśli nie istnieje
     private void createDatabase() {
         try {
             // Łączenie się z bazą danych SQLite (plik "images.db")
@@ -104,35 +93,36 @@ public class ServerApp extends Application {
                     "size INTEGER, " +
                     "delay INTEGER)";
             Statement stmt = conn.createStatement();
-            stmt.execute(sql);
+            stmt.execute(sql);  // Wykonanie zapytania SQL
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace();  // Wypisanie wyjątku w przypadku błędu
         }
     }
 
     // Metoda uruchamiająca serwer
     private void startServer() throws IOException {
-        ServerSocket serverSocket = new ServerSocket(5000);  // Tworzy serwer nasłuchujący na porcie 12345
+        // Tworzymy serwer nasłuchujący na porcie 5000
+        ServerSocket serverSocket = new ServerSocket(5000);
         System.out.println("Serwer uruchomiony. Oczekiwanie na połączenia...");
 
         // Pętla obsługująca klientów
         while (true) {
-            try (Socket clientSocket = serverSocket.accept()) {  // Oczekuje na połączenie klienta
+            try (Socket clientSocket = serverSocket.accept()) {  // Ad 1
                 System.out.println("Połączono z klientem");
 
                 // Odbieramy plik PNG od klienta
-                File receivedFile = receiveFile(clientSocket);
+                File receivedFile = receiveFile(clientSocket);  // Ad 1, 2
 
-                // Odczytujemy wartość promienia z suwaka
+                // Odczytujemy wartość promienia z suwaka  // Ad 3
                 int radius = (int) radiusSlider.getValue();
 
-                // Przekształcamy obraz algorytmem box blur
+                // Przekształcamy obraz algorytmem box blur  // Ad 4
                 BufferedImage blurredImage = applyBoxBlur(receivedFile, radius);
 
-                // Zapisujemy informacje o przekształceniu do bazy danych
+                // Zapisujemy informacje o przekształceniu do bazy danych  // Ad 5
                 saveToDatabase(receivedFile.getName(), radius, 100);  // Przykładowy czas przekształcenia
 
-                // Wysyłamy przekształcony obraz do klienta
+                // Wysyłamy przekształcony obraz do klienta  // Ad 6
                 sendFileToClient(clientSocket, blurredImage);
             }
         }
@@ -142,8 +132,8 @@ public class ServerApp extends Application {
     private File receiveFile(Socket clientSocket) throws IOException {
         DataInputStream dis = new DataInputStream(clientSocket.getInputStream());
 
-        // Odbieramy nazwę pliku
-        String fileName = dis.readUTF();
+        // Generujemy nazwę pliku na podstawie aktualnego czasu
+        String fileName = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()) + ".png";
         File file = new File(IMAGES_DIR + "/" + fileName);
 
         // Zapisujemy plik do katalogu "images"
@@ -151,7 +141,7 @@ public class ServerApp extends Application {
             byte[] buffer = new byte[4096];
             int bytesRead;
             while ((bytesRead = dis.read(buffer)) > 0) {
-                fos.write(buffer, 0, bytesRead);
+                fos.write(buffer, 0, bytesRead);  // Zapisujemy odebrane dane do pliku
             }
         }
 
@@ -161,14 +151,14 @@ public class ServerApp extends Application {
 
     // Metoda przekształcająca obraz algorytmem box blur
     private BufferedImage applyBoxBlur(File file, int radius) throws IOException {
-        BufferedImage image = ImageIO.read(file);
+        BufferedImage image = ImageIO.read(file);  // Wczytujemy obraz z pliku
         BufferedImage result = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
 
         // Przetwarzamy każdy piksel obrazu
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
                 Color blurredColor = getBlurredPixel(image, x, y, radius);
-                result.setRGB(x, y, blurredColor.getRGB());
+                result.setRGB(x, y, blurredColor.getRGB());  // Ustawiamy rozmyty kolor w wyniku
             }
         }
 
@@ -195,6 +185,7 @@ public class ServerApp extends Application {
             }
         }
 
+        // Obliczamy średni kolor piksela
         return new Color(red / count, green / count, blue / count);
     }
 
@@ -207,9 +198,9 @@ public class ServerApp extends Application {
             pstmt.setString(1, fileName);
             pstmt.setInt(2, radius);
             pstmt.setInt(3, delay);
-            pstmt.executeUpdate();
+            pstmt.executeUpdate();  // Wykonanie zapytania
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace();  // Wypisanie wyjątku w przypadku błędu
         }
     }
 
@@ -226,7 +217,7 @@ public class ServerApp extends Application {
             byte[] buffer = new byte[4096];
             int bytesRead;
             while ((bytesRead = fis.read(buffer)) > 0) {
-                dos.write(buffer, 0, bytesRead);
+                dos.write(buffer, 0, bytesRead);  // Wysyłamy dane do klienta
             }
         }
 

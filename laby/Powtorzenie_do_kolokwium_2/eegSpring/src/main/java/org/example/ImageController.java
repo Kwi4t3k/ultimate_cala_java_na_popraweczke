@@ -43,4 +43,6 @@ public class ImageController { // Deklaracja publicznej klasy kontrolera
         model.addAttribute("image", image); // Dodanie atrybutu 'image' do modelu
         return "eegimage"; // Zwrócenie nazwy widoku (szablonu Thymeleaf)
     }
+
+    // do sprawdzenia: http://localhost:8080/image?username=exampleUser&electrode=1
 }

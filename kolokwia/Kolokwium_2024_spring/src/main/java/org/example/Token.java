@@ -6,55 +6,63 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Token {
-    private int id;
-    private LocalDateTime timeOfCreation;
-    private static int actualValueOfToken = 0;
-    private static List<Token> tokens = new ArrayList<Token>(); // Lista do przechowywania wszystkich tokenów, która się aktualizuje sama
+    private int id; // Identyfikator tokena, unikalny dla każdego obiektu
+    private LocalDateTime timeOfCreation; // Czas utworzenia tokena
+    private static int actualValueOfToken = 0; // Statyczna zmienna przechowująca aktualną wartość dla nowego tokena
+    private static List<Token> tokens = new ArrayList<Token>(); // Lista przechowująca wszystkie utworzone tokeny
 
+    // Konstruktor klasy Token, który przypisuje unikalny identyfikator oraz ustawia czas utworzenia
     public Token() {
-        id = actualValueOfToken++; // pierwsza wartość id = 0 | inkrementacja będzie po przypisaniu zmiennej id
-        timeOfCreation = LocalDateTime.now();
-        tokens.add(this);
+        id = actualValueOfToken++; // Inkrementacja zmiennej tokena, aby każdy token miał unikalne ID
+        timeOfCreation = LocalDateTime.now(); // Ustawienie aktualnego czasu utworzenia tokena
+        tokens.add(this); // Dodanie tokena do listy tokenów
     }
 
+    // Getter zwracający ID tokena
     public int getId() {
-        return id;
+        return id; // Zwracamy identyfikator tokena
     }
 
+    // Getter zwracający czas utworzenia tokena
     public LocalDateTime getTimeOfCreation() {
-        return timeOfCreation;
+        return timeOfCreation; // Zwracamy czas utworzenia tokena
     }
 
-    public static List<Token> getTokens() { // Zwraca listę wszystkich tokenów
-        return tokens;
+    // Zwraca listę wszystkich utworzonych tokenów
+    public static List<Token> getTokens() {
+        return tokens; // Zwracamy listę wszystkich tokenów
     }
 
-    //    KROK 2
+    // KROK 2 - Sprawdzenie, czy token jest aktywny, tj. czy został utworzony mniej niż 5 minut temu
     public boolean isTokenActive() {
-        LocalDateTime now = LocalDateTime.now();
-        long elapsedMinutes = ChronoUnit.MINUTES.between(timeOfCreation, now);
+        LocalDateTime now = LocalDateTime.now(); // Pobranie aktualnego czasu
+        long elapsedMinutes = ChronoUnit.MINUTES.between(timeOfCreation, now); // Obliczenie różnicy minut między utworzeniem tokena a aktualnym czasem
 
-        return elapsedMinutes < 5;
+        return elapsedMinutes < 5; // Zwracamy true, jeśli token został utworzony mniej niż 5 minut temu
     }
 
-    // KROK 8 | usuwanie tokenu
-    public static void removeToken(int id){
+    // KROK 8 - Usuwanie tokena z listy tokenów na podstawie ID
+    public static void removeToken(int id) {
+        // Iterujemy po liście tokenów
         for (Token token : tokens) {
+            // Jeśli znajdziemy token o danym ID, usuwamy go
             if (token.getId() == id) {
-                tokens.remove(token);
+                tokens.remove(token); // Usunięcie tokena z listy
             }
         }
     }
 
-    static class TokenDTO { // jest tworzony na podstawie zwykłego tokena | obiekt transportujący dane do tokenów | łatwiej zarządzać isActive | DTO - data transfer objector
-        public int id;
-        public LocalDateTime timeOfCreation;
-        public boolean isActive; // przekazywanie czy token jest aktywny
+    // Klasa DTO (Data Transfer Object) do przekazywania tokenów z informacją o ich stanie aktywności
+    static class TokenDTO {
+        public int id; // Identyfikator tokena
+        public LocalDateTime timeOfCreation; // Czas utworzenia tokena
+        public boolean isActive; // Informacja, czy token jest aktywny
 
+        // Konstruktor, który tworzy DTO na podstawie obiektu Token
         public TokenDTO(Token token) {
-            this.id = token.id;
-            this.timeOfCreation = token.timeOfCreation;
-            this.isActive = token.isTokenActive();
+            this.id = token.id; // Przypisanie ID tokena
+            this.timeOfCreation = token.timeOfCreation; // Przypisanie czasu utworzenia tokena
+            this.isActive = token.isTokenActive(); // Sprawdzenie i przypisanie, czy token jest aktywny
         }
     }
 }

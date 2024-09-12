@@ -9,10 +9,11 @@ public class Token {
     private int id; // Identyfikator tokena, unikalny dla każdego obiektu
     private LocalDateTime timeOfCreation; // Czas utworzenia tokena
     private static int actualValueOfToken = 0; // Statyczna zmienna przechowująca aktualną wartość dla nowego tokena
-    private static List<Token> tokens = new ArrayList<Token>(); // Lista przechowująca wszystkie utworzone tokeny
+    private static List<Token> tokens = new ArrayList<Token>(); // Lista przechowująca wszystkie utworzone tokeny, która się aktualizuje sama
 
     // Konstruktor klasy Token, który przypisuje unikalny identyfikator oraz ustawia czas utworzenia
     public Token() {
+        // pierwsza wartość id = 0 | inkrementacja będzie po przypisaniu zmiennej id
         id = actualValueOfToken++; // Inkrementacja zmiennej tokena, aby każdy token miał unikalne ID
         timeOfCreation = LocalDateTime.now(); // Ustawienie aktualnego czasu utworzenia tokena
         tokens.add(this); // Dodanie tokena do listy tokenów
@@ -54,6 +55,8 @@ public class Token {
 
     // Klasa DTO (Data Transfer Object) do przekazywania tokenów z informacją o ich stanie aktywności
     static class TokenDTO {
+        // jest tworzony na podstawie zwykłego tokena | obiekt transportujący dane do tokenów | łatwiej zarządzać isActive | DTO - data transfer objector
+
         public int id; // Identyfikator tokena
         public LocalDateTime timeOfCreation; // Czas utworzenia tokena
         public boolean isActive; // Informacja, czy token jest aktywny

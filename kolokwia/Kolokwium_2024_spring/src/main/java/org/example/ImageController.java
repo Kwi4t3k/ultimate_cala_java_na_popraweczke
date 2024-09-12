@@ -42,6 +42,8 @@ public class ImageController {
     // http://localhost:8080/pixel?tokenId=1&x=300&y=300&color=0x0015FF
     // albo curl: curl -X POST http://localhost:8080/pixel?tokenId=11"&"x=40"&"y=70"&"color=%2300FF00
     //            curl -X POST "http://localhost:8080/pixel?tokenId=12&x=80&y=130&color=%2300FF00"
+
+    @PostMapping("/pixel")
     public ResponseEntity setColorOfPixel(@RequestParam("tokenId") int tokenId, @RequestParam("x") int x, @RequestParam("y") int y, @RequestParam("color") String color) {
         System.out.println("setColor_start"); // Logowanie rozpoczęcia operacji
 

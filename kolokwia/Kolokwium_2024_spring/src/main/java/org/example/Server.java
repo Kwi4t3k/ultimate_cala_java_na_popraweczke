@@ -87,7 +87,7 @@ public class Server extends Thread {
                                 int id = Integer.parseInt(messageParts[1]); // Pobranie ID do zbanowania
                                 System.out.println("Użytkownik o id: " + id + " zbanowany");
 
-                                synchronized (this) { // Synchronizacja operacji wątku
+                                synchronized (this) { // Synchronizacja operacji wątku | w nawiasach trzeba dać wątek, dajemy this bo klasa extenduje wątek
                                     int numberOfDeletedRecords = AdminUtills.ban(id); // Wywołanie metody ban
                                     writer.println("Usunieto " + numberOfDeletedRecords + " rekordow");
                                 }
